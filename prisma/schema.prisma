@@ -1,0 +1,44 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider     = "mysql"
+  url          = env("DATABASE_URL")
+  relationMode = "prisma"
+}
+
+model Raffle {
+  id         Int      @id @default(autoincrement())
+  donationId Int      @unique
+  winner     Boolean
+  donation   Donation @relation(fields: [donationId], references: [hash])
+
+  @@index([donationId])
+}
+
+model Stickers {
+  id     Int @id @default(autoincrement())
+  amount Int @default(50)
+}
+
+model Donation {
+  hash          Int      @id @unique
+  amount        Int
+  hidden_amount Boolean
+  public        Boolean
+  name          String   @db.VarChar(255)
+  message       String
+  timestamp     DateTime
+  updatedAt     DateTime @updatedAt
+  raffle        Raffle?
+}
+
+model Stats {
+  id            Int      @id @default(autoincrement())
+  updatedAt     DateTime @updatedAt
+  amount        Int
+  noOfDonations Int
+  title         String
+  goal          Int
+}
